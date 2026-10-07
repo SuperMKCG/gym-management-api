@@ -274,7 +274,7 @@ spring.jpa.hibernate.ddl-auto=update
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/TU-USUARIO/gym.git
+git clone https://github.com/SuperMKCG/gym-management-api.git
 cd gym
 ```
 
