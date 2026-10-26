@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TrainerService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report"></a> &gt; <a href="index.source.html" class="el_package">com.management.gym.service</a> &gt; <span class="el_source">TrainerService.java</span></div><h1>TrainerService.java</h1><pre class="source lang-java linenums">package com.management.gym.service;
+
+import com.management.gym.dto.request.trainer.TrainerCreateRequestDTO;
+import com.management.gym.dto.request.trainer.TrainerUpdateRequestDTO;
+import com.management.gym.dto.response.TrainerResponse;
+import com.management.gym.entity.Trainer;
+import com.management.gym.exception.BusinessRuleException;
+import com.management.gym.exception.ResourceNotFoundException;
+import com.management.gym.mapper.TrainerMapper;
+import com.management.gym.repository.TrainerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+<span class="fc" id="L17">public class TrainerService {</span>
+
+    @Autowired
+    private TrainerRepository trainerRepository;
+
+    //Create a trainer
+    public TrainerResponse createTrainer(TrainerCreateRequestDTO trainerCreateRequestDTO){
+<span class="fc" id="L24">        validateTrainerEmail(trainerCreateRequestDTO.email(), null);</span>
+
+<span class="fc" id="L26">        Trainer trainer = new Trainer();</span>
+<span class="fc" id="L27">        trainer.setName(trainerCreateRequestDTO.name());</span>
+<span class="fc" id="L28">        trainer.setEmail(trainerCreateRequestDTO.email());</span>
+<span class="fc" id="L29">        trainer.setSpeciality(trainerCreateRequestDTO.speciality());</span>
+<span class="fc" id="L30">        trainer.setActive(true);</span>
+
+<span class="fc" id="L32">        trainerRepository.save(trainer);</span>
+
+<span class="fc" id="L34">        return TrainerMapper.toResponse(trainer);</span>
+    }
+
+    //Get all trainers
+    public List&lt;TrainerResponse&gt; getAllTrainers(){
+<span class="fc" id="L39">        return trainerRepository.findAll()</span>
+<span class="fc" id="L40">                .stream()</span>
+<span class="fc" id="L41">                .map(TrainerMapper::toResponse)</span>
+<span class="fc" id="L42">                .toList();</span>
+    }
+
+    //Get trainer by id
+    public TrainerResponse getTrainerById(Long id){
+<span class="fc" id="L47">        Trainer trainer = findTrainerById(id);</span>
+
+<span class="fc" id="L49">        return TrainerMapper.toResponse(trainer);</span>
+    }
+
+    //Update trainer by id
+    public TrainerResponse updateTrainerById(TrainerUpdateRequestDTO trainerUpdateRequestDTO, Long id){
+<span class="fc" id="L54">        Trainer trainer = findTrainerById(id);</span>
+
+<span class="pc bpc" id="L56" title="2 of 4 branches missed.">        if(trainerUpdateRequestDTO.name() != null &amp;&amp; !trainerUpdateRequestDTO.name().isBlank())</span>
+<span class="fc" id="L57">            trainer.setName(trainerUpdateRequestDTO.name());</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if(trainerUpdateRequestDTO.email() != null){</span>
+<span class="fc" id="L59">            validateTrainerEmail(trainerUpdateRequestDTO.email(), id);</span>
+<span class="fc" id="L60">            trainer.setEmail(trainerUpdateRequestDTO.email());</span>
+        }
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if(trainerUpdateRequestDTO.speciality() != null) trainer.setSpeciality(trainerUpdateRequestDTO.speciality());</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if(trainerUpdateRequestDTO.active() != null) trainer.setActive(trainerUpdateRequestDTO.active());</span>
+
+<span class="fc" id="L65">        trainerRepository.save(trainer);</span>
+
+<span class="fc" id="L67">        return TrainerMapper.toResponse(trainer);</span>
+    }
+
+    //Delete trainer by id
+    public TrainerResponse deleteTrainerById(Long id){
+<span class="fc" id="L72">        Trainer trainer = findTrainerById(id);</span>
+
+<span class="fc" id="L74">        trainerRepository.delete(trainer);</span>
+
+<span class="fc" id="L76">        return TrainerMapper.toResponse(trainer);</span>
+    }
+
+
+    // Aux function for find trainer by id
+    public Trainer findTrainerById(Long id){
+<span class="fc" id="L82">        return trainerRepository.findById(id)</span>
+<span class="pc" id="L83">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;There's no trainer with this id&quot;));</span>
+    }
+
+    //Aux validate information for trainer
+    private void validateTrainerEmail(String email, Long trainerId){
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        Boolean existsTrainerEmail = trainerId == null</span>
+<span class="fc" id="L89">                ? trainerRepository.existsByEmail(email)</span>
+<span class="fc" id="L90">                : trainerRepository.existsByEmailAndIdTrainerNot(email, trainerId);</span>
+
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if(existsTrainerEmail){</span>
+<span class="nc" id="L93">            throw new BusinessRuleException(&quot;This email is registered..try with another one&quot;);</span>
+        }
+<span class="fc" id="L95">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

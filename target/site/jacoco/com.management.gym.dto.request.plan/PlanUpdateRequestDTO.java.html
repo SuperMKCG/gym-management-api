@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlanUpdateRequestDTO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report"></a> &gt; <a href="index.source.html" class="el_package">com.management.gym.dto.request.plan</a> &gt; <span class="el_source">PlanUpdateRequestDTO.java</span></div><h1>PlanUpdateRequestDTO.java</h1><pre class="source lang-java linenums">package com.management.gym.dto.request.plan;
+
+import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.Range;
+
+import java.math.BigDecimal;
+
+<span class="nc" id="L8">public record PlanUpdateRequestDTO(</span>
+
+        @Size(
+                min = 3,
+                max = 50,
+                message = &quot;The name of the plan must have between 3 and 50 characters&quot;
+        )
+        String name,
+
+        @DecimalMin(value = &quot;0.01&quot;, message = &quot;The price must be greater than 0&quot;)
+        @Digits(integer = 4, fraction = 2, message = &quot;The price must have up to 4 integer digits and 2 decimal places&quot;)
+        BigDecimal Price,
+
+        @Positive(message = &quot;The number of months must be positive&quot;)
+        @Min(value = 1, message = &quot;The months must be greater than 1&quot;)
+        @Max(value = 12, message = &quot;The months must be less or equal than 12&quot;)
+        Integer durationMonths,
+
+        Boolean active
+
+) {
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

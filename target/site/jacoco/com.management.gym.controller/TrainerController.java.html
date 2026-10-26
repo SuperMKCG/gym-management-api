@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TrainerController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report"></a> &gt; <a href="index.source.html" class="el_package">com.management.gym.controller</a> &gt; <span class="el_source">TrainerController.java</span></div><h1>TrainerController.java</h1><pre class="source lang-java linenums">package com.management.gym.controller;
+
+import com.management.gym.dto.request.trainer.TrainerCreateRequestDTO;
+import com.management.gym.dto.request.trainer.TrainerUpdateRequestDTO;
+import com.management.gym.dto.response.TrainerResponse;
+import com.management.gym.service.TrainerService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/trainer&quot;)
+<span class="fc" id="L17">public class TrainerController {</span>
+    @Autowired
+    private TrainerService trainerService;
+
+    @PostMapping
+    public ResponseEntity&lt;TrainerResponse&gt; createTrainer(@Valid @RequestBody TrainerCreateRequestDTO trainerCreateRequestDTO){
+<span class="nc" id="L23">        TrainerResponse trainerResponse = trainerService.createTrainer(trainerCreateRequestDTO);</span>
+<span class="nc" id="L24">        return new ResponseEntity&lt;&gt;(trainerResponse, HttpStatus.OK);</span>
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;TrainerResponse&gt;&gt; getAllTrainers(){
+<span class="nc" id="L29">        List&lt;TrainerResponse&gt; trainerResponse = trainerService.getAllTrainers();</span>
+<span class="nc" id="L30">        return new ResponseEntity&lt;&gt;(trainerResponse, HttpStatus.OK);</span>
+    }
+
+    @GetMapping(&quot;{id}&quot;)
+    public ResponseEntity&lt;TrainerResponse&gt; getTrainerById(@PathVariable Long id){
+<span class="nc" id="L35">        TrainerResponse trainerResponse = trainerService.getTrainerById(id);</span>
+<span class="nc" id="L36">        return new ResponseEntity&lt;&gt;(trainerResponse, HttpStatus.OK);</span>
+    }
+
+    @PatchMapping(&quot;{id}&quot;)
+    public ResponseEntity&lt;TrainerResponse&gt; updateTrainerById( @Valid
+            @RequestBody TrainerUpdateRequestDTO trainerUpdateRequestDTO, @PathVariable Long id){
+<span class="nc" id="L42">        TrainerResponse trainerResponse = trainerService.updateTrainerById(trainerUpdateRequestDTO, id);</span>
+<span class="nc" id="L43">        return new ResponseEntity&lt;&gt;(trainerResponse, HttpStatus.OK);</span>
+    }
+
+    @DeleteMapping(&quot;{id}&quot;)
+    public ResponseEntity&lt;TrainerResponse&gt; deleteTrainerById(@PathVariable Long id){
+<span class="nc" id="L48">        TrainerResponse trainerResponse = trainerService.deleteTrainerById(id);</span>
+<span class="nc" id="L49">        return new ResponseEntity&lt;&gt;(trainerResponse, HttpStatus.OK);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

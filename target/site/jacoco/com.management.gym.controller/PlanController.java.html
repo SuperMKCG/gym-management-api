@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlanController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report"></a> &gt; <a href="index.source.html" class="el_package">com.management.gym.controller</a> &gt; <span class="el_source">PlanController.java</span></div><h1>PlanController.java</h1><pre class="source lang-java linenums">package com.management.gym.controller;
+
+import com.management.gym.dto.request.plan.PlanCreateRequestDTO;
+import com.management.gym.dto.request.plan.PlanUpdateRequestDTO;
+import com.management.gym.dto.response.PlanResponse;
+import com.management.gym.service.PlanService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+
+@RestController
+@RequestMapping(&quot;/plans&quot;)
+<span class="fc" id="L18">public class PlanController {</span>
+
+    @Autowired
+    private PlanService planService;
+
+    @PostMapping
+    public ResponseEntity&lt;PlanResponse&gt; createPlan(@Valid @RequestBody PlanCreateRequestDTO planCreateRequestDTO){
+<span class="nc" id="L25">        PlanResponse response = planService.createPlan(planCreateRequestDTO);</span>
+<span class="nc" id="L26">        return new ResponseEntity&lt;&gt;(response, HttpStatus.CREATED);</span>
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;PlanResponse&gt;&gt; getAllPlans(){
+<span class="nc" id="L31">        List&lt;PlanResponse&gt; response = planService.getAllPlans();</span>
+<span class="nc" id="L32">        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;PlanResponse&gt; getPlanByID(@PathVariable Long id){
+<span class="nc" id="L37">        PlanResponse response = planService.getPlanByID(id);</span>
+<span class="nc" id="L38">        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</span>
+    }
+
+    @PatchMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;PlanResponse&gt; updatePlanByID(@Valid @RequestBody PlanUpdateRequestDTO planUpdateRequestDTO,
+                                                       @PathVariable Long id){
+<span class="nc" id="L44">        PlanResponse response = planService.UpdatePlanByID(planUpdateRequestDTO,id);</span>
+<span class="nc" id="L45">        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;PlanResponse&gt; deletePlan(@PathVariable Long id){
+<span class="nc" id="L50">        PlanResponse response = planService.deletePlan(id);</span>
+<span class="nc" id="L51">        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

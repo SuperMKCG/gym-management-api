@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MemberController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report"></a> &gt; <a href="index.source.html" class="el_package">com.management.gym.controller</a> &gt; <span class="el_source">MemberController.java</span></div><h1>MemberController.java</h1><pre class="source lang-java linenums">package com.management.gym.controller;
+
+import com.management.gym.dto.request.member.MemberCreateRequestDTO;
+import com.management.gym.dto.request.member.MemberUpdateRequestDTO;
+import com.management.gym.dto.response.MemberResponse;
+import com.management.gym.service.MemberService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/members&quot;)
+<span class="fc" id="L17">public class MemberController {</span>
+    @Autowired
+    private MemberService memberService;
+
+    @PostMapping
+    public ResponseEntity&lt;MemberResponse&gt; createMember(@Valid @RequestBody MemberCreateRequestDTO memberCreateRequestDTO){
+<span class="nc" id="L23">        MemberResponse response = memberService.createMember(memberCreateRequestDTO);</span>
+<span class="nc" id="L24">        return new ResponseEntity&lt;&gt;(response, HttpStatus.CREATED);</span>
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;MemberResponse&gt;&gt; getAllMembers(){
+<span class="nc" id="L29">        List&lt;MemberResponse&gt; membersResponse = memberService.getAllMembers();</span>
+<span class="nc" id="L30">        return new ResponseEntity&lt;&gt;(membersResponse, HttpStatus.OK);</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;MemberResponse&gt; getMemberByID(@PathVariable Long id){
+<span class="nc" id="L35">        MemberResponse response = memberService.getMemberByID(id);</span>
+<span class="nc" id="L36">        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</span>
+    }
+
+    @PatchMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;MemberResponse&gt; updateMemberByID(@Valid
+            @RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO, @PathVariable Long id){
+<span class="nc" id="L42">        MemberResponse response = memberService.updateMemberByID(memberUpdateRequestDTO,id);</span>
+<span class="nc" id="L43">        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;MemberResponse&gt; deleteMemberByID(@PathVariable Long id){
+<span class="nc" id="L48">        MemberResponse response = memberService.deleteMemberByID(id);</span>
+<span class="nc" id="L49">        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</span>
+    }
+
+    @GetMapping(&quot;/plan{idPlan}&quot;)
+    public List&lt;MemberResponse&gt; membersByPlan(@RequestParam Long idPlan, @RequestParam(required = false)
+                                                              Boolean active){
+<span class="nc" id="L55">        return memberService.membersByPlan(idPlan, active);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

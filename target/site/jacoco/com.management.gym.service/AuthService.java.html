@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report"></a> &gt; <a href="index.source.html" class="el_package">com.management.gym.service</a> &gt; <span class="el_source">AuthService.java</span></div><h1>AuthService.java</h1><pre class="source lang-java linenums">package com.management.gym.service;
+
+import com.management.gym.dto.request.login.LoginRequestDTO;
+import com.management.gym.dto.response.AuthResponse;
+import com.management.gym.exception.InvalidCredentialsException;
+import com.management.gym.mapper.AuthMapper;
+import com.management.gym.security.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+
+    //Authenticate the user
+    public AuthResponse login(LoginRequestDTO loginRequestDTO){
+        try{
+
+<span class="nc" id="L26">            Authentication authentication = authenticationManager.authenticate(</span>
+                    new UsernamePasswordAuthenticationToken(
+<span class="nc" id="L28">                            loginRequestDTO.email(),</span>
+<span class="nc" id="L29">                            loginRequestDTO.password()</span>
+                    )
+            );
+
+<span class="nc" id="L33">            UserDetails userDetails = (UserDetails) authentication.getPrincipal();</span>
+
+<span class="nc" id="L35">            String jwtToken = jwtService.generateToken(userDetails);</span>
+
+<span class="nc" id="L37">            return AuthMapper.toResponse(jwtToken);</span>
+<span class="nc" id="L38">        }catch (AuthenticationException ex){</span>
+<span class="nc" id="L39">            throw new InvalidCredentialsException(&quot;The user or password is invalid... try with other credentials&quot;);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MemberService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report"></a> &gt; <a href="index.source.html" class="el_package">com.management.gym.service</a> &gt; <span class="el_source">MemberService.java</span></div><h1>MemberService.java</h1><pre class="source lang-java linenums">package com.management.gym.service;
+
+import com.management.gym.dto.request.member.MemberCreateRequestDTO;
+import com.management.gym.dto.request.member.MemberUpdateRequestDTO;
+import com.management.gym.dto.response.MemberResponse;
+import com.management.gym.entity.Member;
+import com.management.gym.entity.Plan;
+import com.management.gym.exception.BusinessRuleException;
+import com.management.gym.exception.ResourceNotFoundException;
+import com.management.gym.mapper.MemberMapper;
+import com.management.gym.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+<span class="fc" id="L19">public class MemberService {</span>
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private PlanService planService;
+
+    //Create a member
+    public MemberResponse createMember(MemberCreateRequestDTO memberCreateRequestDTO) {
+<span class="fc" id="L29">        Plan plan = planService.findPlanById(memberCreateRequestDTO.planID());</span>
+
+<span class="fc" id="L31">        validateInformation(memberCreateRequestDTO.email(), memberCreateRequestDTO.phone(), null);</span>
+
+<span class="fc" id="L33">        Member member = new Member();</span>
+
+<span class="fc" id="L35">        member.setName(memberCreateRequestDTO.name());</span>
+<span class="fc" id="L36">        member.setEmail(memberCreateRequestDTO.email());</span>
+<span class="fc" id="L37">        member.setPhone(memberCreateRequestDTO.phone());</span>
+<span class="fc" id="L38">        member.setRegistrationDate(LocalDate.now());</span>
+<span class="fc" id="L39">        member.setActive(true);</span>
+
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        if(plan.getActive() == true){</span>
+<span class="fc" id="L42">            member.setPlan(plan);</span>
+        } else {
+<span class="nc" id="L44">            throw new BusinessRuleException(&quot;This plan isn't active.. try with another plan&quot;);</span>
+        }
+
+<span class="fc" id="L47">        Member savedMember = memberRepository.save(member);</span>
+
+<span class="fc" id="L49">        return MemberMapper.toResponse(savedMember);</span>
+    }
+
+
+    //Get all members
+    public List&lt;MemberResponse&gt; getAllMembers(){
+<span class="fc" id="L55">        return memberRepository.findAll()</span>
+<span class="fc" id="L56">                .stream()</span>
+<span class="fc" id="L57">                .map(MemberMapper::toResponse)</span>
+<span class="fc" id="L58">                .toList();</span>
+    }
+
+    //Find by ID
+    public MemberResponse getMemberByID(Long id){
+
+<span class="fc" id="L64">        Member member = findMemberById(id);</span>
+
+<span class="fc" id="L66">        return MemberMapper.toResponse(member);</span>
+    }
+
+    //Update a member by ID
+    public MemberResponse updateMemberByID(MemberUpdateRequestDTO memberUpdateRequestDTO, Long id){
+<span class="fc" id="L71">        Member member = findMemberById(id);</span>
+
+<span class="fc" id="L73">        validateInformation(memberUpdateRequestDTO.email(), memberUpdateRequestDTO.phone(),id);</span>
+
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if (memberUpdateRequestDTO.planID() != null) {</span>
+<span class="fc" id="L76">            Plan plan = planService.findPlanById(memberUpdateRequestDTO.planID());</span>
+
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">            if (!plan.getActive()) {</span>
+<span class="nc" id="L79">                throw new BusinessRuleException(&quot;This plan isn't active. Try another plan&quot;);</span>
+            }
+
+<span class="fc" id="L82">            member.setPlan(plan);</span>
+        }
+
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (memberUpdateRequestDTO.active() != null) member.setActive(memberUpdateRequestDTO.active());</span>
+<span class="pc bpc" id="L86" title="2 of 4 branches missed.">        if (memberUpdateRequestDTO.name() != null &amp;&amp; !memberUpdateRequestDTO.name().isBlank())</span>
+<span class="fc" id="L87">            member.setName(memberUpdateRequestDTO.name());</span>
+<span class="pc bpc" id="L88" title="2 of 4 branches missed.">        if (memberUpdateRequestDTO.email() != null &amp;&amp; !memberUpdateRequestDTO.email().isBlank())</span>
+<span class="nc" id="L89">            member.setEmail(memberUpdateRequestDTO.email());</span>
+<span class="pc bpc" id="L90" title="2 of 4 branches missed.">        if (memberUpdateRequestDTO.phone() != null &amp;&amp; !memberUpdateRequestDTO.phone().isBlank())</span>
+<span class="fc" id="L91">            member.setPhone(memberUpdateRequestDTO.phone());</span>
+
+<span class="fc" id="L93">        memberRepository.save(member);</span>
+<span class="fc" id="L94">        return MemberMapper.toResponse(member);</span>
+    }
+
+    //Delete member by ID
+    public MemberResponse deleteMemberByID(Long id){
+<span class="fc" id="L99">        Member member = findMemberById(id);</span>
+
+<span class="fc" id="L101">        memberRepository.delete(member);</span>
+
+<span class="fc" id="L103">        return MemberMapper.toResponse(member);</span>
+    }
+
+    //Find members by plan and optional if it's active
+    public List&lt;MemberResponse&gt; membersByPlan(Long idPlan, Boolean active) {
+
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (active == null) {</span>
+<span class="nc" id="L110">            return memberRepository.findByPlanIdPlan(idPlan)</span>
+<span class="nc" id="L111">                    .stream()</span>
+<span class="nc" id="L112">                    .map(MemberMapper::toResponse)</span>
+<span class="nc" id="L113">                    .toList();</span>
+        }
+
+<span class="nc" id="L116">        return memberRepository.findByPlanIdPlanAndActive(idPlan, active)</span>
+<span class="nc" id="L117">                .stream()</span>
+<span class="nc" id="L118">                .map(MemberMapper::toResponse)</span>
+<span class="nc" id="L119">                .toList();</span>
+    }
+
+
+    //Aux method to validate email
+    private void validateInformation(String email, String phone, Long memberId) {
+
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        boolean existsEmail = memberId == null</span>
+<span class="fc" id="L127">                ? memberRepository.existsByEmail(email)</span>
+<span class="fc" id="L128">                : memberRepository.existsByEmailAndIdMemberNot(email, memberId);</span>
+
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (existsEmail) {</span>
+<span class="nc" id="L131">            throw new BusinessRuleException(&quot;The email was registered&quot;);</span>
+        }
+
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        boolean existsPhone = memberId == null</span>
+<span class="fc" id="L135">                ? memberRepository.existsByPhone(phone)</span>
+<span class="fc" id="L136">                : memberRepository.existsByPhoneAndIdMemberNot(phone, memberId);</span>
+
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if (existsPhone){</span>
+<span class="nc" id="L139">            throw new BusinessRuleException(&quot;The phone was registered&quot;);</span>
+        }
+<span class="fc" id="L141">    }</span>
+
+    //Aux function to find a member
+    public Member findMemberById(Long id){
+<span class="fc" id="L145">        return memberRepository.findById(id).</span>
+<span class="pc" id="L146">                orElseThrow(() -&gt; new ResourceNotFoundException(&quot;There's no member with that ID&quot;));</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
